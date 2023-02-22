@@ -20,6 +20,7 @@ class CreateItemTable extends Migration
                 $table->integer('qty');
                 $table->decimal('price');
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
         if (!Schema::hasTable('invoices')){
@@ -30,6 +31,7 @@ class CreateItemTable extends Migration
             $table->string('description');
             $table->enum('status', ['Paid', 'Pending', 'Draft'])->default('Draft');
             $table->timestamps();
+                $table->softDeletes();
 
         });
     }
