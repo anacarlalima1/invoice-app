@@ -13,11 +13,10 @@ class CreateAddressTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('address')){
-            Schema::create('address', function (Blueprint $table) {
+        if (!Schema::hasTable('addresses')){
+            Schema::create('addresses', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('id_client')->constrained('client');
-                $table->string('name');
+                $table->foreignId('id_client')->constrained('clients');
                 $table->string('street');
                 $table->string('city');
                 $table->string('country');
@@ -33,6 +32,6 @@ class CreateAddressTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('address');
+        Schema::dropIfExists('addresses');
     }
 }

@@ -13,8 +13,8 @@ class CreateClientTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('client')){
-            Schema::create('client', function (Blueprint $table) {
+        if (!Schema::hasTable('clients')){
+            Schema::create('clients', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
                 $table->string('email');
@@ -30,6 +30,6 @@ class CreateClientTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('client');
+        Schema::dropIfExists('clients');
     }
 }
