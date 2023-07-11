@@ -10,7 +10,8 @@ class Invoice extends Model
 {
     protected $table = 'invoices';
     use HasFactory;
-    public function client()
+
+    public function author()
     {
         return $this->belongsTo(Client::class, 'id_client', 'id');
     }
@@ -18,7 +19,6 @@ class Invoice extends Model
     {
         return $this->hasMany(Item::class, 'id_item', 'id');
     }
-
     public function listInvoices($request)
     {
         return DB::table('invoices')
