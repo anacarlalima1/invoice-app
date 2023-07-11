@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateInvoicesTable extends Migration
+class CreateAddressTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,15 @@ class CreateInvoicesTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('invoices')){
-            Schema::create('invoices', function (Blueprint $table) {
+        if (!Schema::hasTable('addresses')){
+            Schema::create('addresses', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('id_client')->constrained('clients');
-                $table->foreignId('id_item')->constrained('items');
-                $table->string('description');
-                $table->enum('status', ['Paid', 'Pending', 'Draft'])->default('Draft');
+                $table->string('street');
+                $table->string('city');
+                $table->string('country');
                 $table->timestamps();
+                $table->softDeletes();
             });
         }
     }
@@ -32,6 +33,6 @@ class CreateInvoicesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('invoices');
+        Schema::dropIfExists('addresses');
     }
 }
