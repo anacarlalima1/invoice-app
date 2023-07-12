@@ -13,6 +13,7 @@
   <li>Instale as dependências (na ocorrência de erros, remover o arquivo composer.lock.json e rodar o install novamente) - <b>composer install</b></li>
   <li>Crie e configure o banco de dados no arquivo .env (pode ser baseado no arquivo .env-example na raiz do projeto) - <b>notepad .env (windows) nano .env (linux)</b></li>
   <li>Depois de configurar o banco de dados, rode as migrations - <b>php artisan migrate</b></li>
+  <li>Rode as seeds para popular o banco, rodando o comando - <b>php artisan db:seed</b></li>
   <li>Crie a chave laravel do projeto - <b>php artisan key:generate</b></li>
 	<li>No terminal, digite o comando - <b>php artisan serve</b></li>
 </ul>
@@ -26,4 +27,9 @@
 
 <h2>🧑🏻‍ Autor</h2>
 <p>Feito por Ana Carla</p>
-<a href="https://www.linkedin.com/in/ana-carla-lima-a32800212" target="_blank"><img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white"
+<a href="https://www.linkedin.com/in/ana-carla-lima-a32800212">
+	<img src="https://img.shields.io/badge/-Ana-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https:https://www.linkedin.com/in/ana-carla-lima-a32800212">
+</a>
+<a href="mailto:anacarlan07@gmail.com">
+	<img src="https://img.shields.io/badge/-anacarlan07@gmail.com-c14438?style=flat-square&logo=Gmail&logoColor=white&link=mailto:anacarlan07@gmail.com">
+</a>

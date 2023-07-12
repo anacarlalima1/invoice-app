@@ -22,7 +22,15 @@ class InvoiceController extends Controller
     public function getAllInvoices(Request $request)
     {
         try {
-            return response()->json(['success' => true, 'clients' => $this->invoice->listInvoices($request)]);
+            return response()->json(['success' => true, 'invoices' => $this->invoice->listInvoices($request)]);
+        } catch (\Exception $exception) {
+            return response()->json(['success' => false, 'message' => $exception->getMessage()], 500);
+        }
+    }
+    public function getByIdInvoice($id)
+    {
+        try {
+            return response()->json(['success' => true, 'invoice' => $this->invoice->listInvoices($id)]);
         } catch (\Exception $exception) {
             return response()->json(['success' => false, 'message' => $exception->getMessage()], 500);
         }
