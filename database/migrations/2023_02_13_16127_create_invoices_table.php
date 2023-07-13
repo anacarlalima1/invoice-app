@@ -17,7 +17,6 @@ class CreateInvoicesTable extends Migration
             Schema::create('invoices', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('id_client')->constrained('clients');
-                $table->foreignId('id_item')->constrained('items');
                 $table->string('description');
                 $table->enum('status', ['Paid', 'Pending', 'Draft'])->default('Draft');
                 $table->timestamps();

@@ -10,6 +10,7 @@ class Item extends Model
     use HasFactory;
     public function author()
     {
-        return $this->belongsTo(Invoice::class, 'id_item', 'id');
+        return $this->belongsTo(Invoice::class, 'id_invoice', 'id');
     }
+
 }

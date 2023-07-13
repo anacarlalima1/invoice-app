@@ -16,8 +16,7 @@ class InvoiceFactory extends Factory
     public function definition()
     {
         return [
-            'id_client' => Client::factory(),
-            'id_item' => Item::factory(),
+            'id_client' =>  Client::inRandomOrder()->first()->id,
             'description' => $this->faker->text(),
         ];
     }

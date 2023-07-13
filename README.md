@@ -13,7 +13,8 @@
   <li>Instale as dependências (na ocorrência de erros, remover o arquivo composer.lock.json e rodar o install novamente) - <b>composer install</b></li>
   <li>Crie e configure o banco de dados no arquivo .env (pode ser baseado no arquivo .env-example na raiz do projeto) - <b>notepad .env (windows) nano .env (linux)</b></li>
   <li>Depois de configurar o banco de dados, rode as migrations - <b>php artisan migrate</b></li>
-  <li>Rode as seeds para popular o banco, rodando o comando - <b>php artisan db:seed</b></li>
+  <li>Rode esse comando para popular a tabela de clientes - <b>php artisan db:seed --class=ClientSeeder</b></li>
+  <li>Rode esse comando para popular as demais tabelas do banco - <b>php artisan db:seed</b></li>
   <li>Crie a chave laravel do projeto - <b>php artisan key:generate</b></li>
 	<li>No terminal, digite o comando - <b>php artisan serve</b></li>
 </ul>

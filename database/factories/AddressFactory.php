@@ -14,7 +14,7 @@ class AddressFactory extends Factory
     public function definition()
     {
         return [
-            'id_client' => Client::factory(),
+            'id_client' =>  Client::inRandomOrder()->first()->id,
             'street' => $this->faker->streetAddress(),
             'city' => $this->faker->city(),
             'country' => $this->faker->country(),
