@@ -18,6 +18,7 @@ class InvoiceFactory extends Factory
         return [
             'id_client' =>  Client::inRandomOrder()->first()->id,
             'description' => $this->faker->text(),
+            'data_payment' => $this->faker->date(),
         ];
     }
 }

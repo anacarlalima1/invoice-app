@@ -20,6 +20,7 @@ class CreateAddressesTable extends Migration
                 $table->string('street');
                 $table->string('city');
                 $table->string('country');
+                $table->string('cep');
                 $table->timestamps();
                 $table->softDeletes();
             });

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 class Invoice extends Model
 {
     protected $table = 'invoices';
+    protected $fillable = ['description', 'data_payment', 'id_client', 'created_at'];
     use HasFactory;
 
     public function author()

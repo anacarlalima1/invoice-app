@@ -18,6 +18,7 @@ class AddressFactory extends Factory
             'street' => $this->faker->streetAddress(),
             'city' => $this->faker->city(),
             'country' => $this->faker->country(),
+            'cep' => $this->faker->buildingNumber(),
         ];
     }
 }
