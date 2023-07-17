@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 class Address extends Model
 {
     protected $table = 'addresses';
+    protected $fillable = ['street', 'city', 'country', 'cep'];
+
     use HasFactory;
     public function client()
     {

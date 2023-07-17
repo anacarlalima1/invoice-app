@@ -7,6 +7,7 @@ use App\Models\Address;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\Item;
+use App\Models\SendersAddress;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
@@ -37,6 +38,7 @@ class InvoiceController extends Controller
             return response()->json(['success' => false, 'message' => $exception->getMessage()], 500);
         }
     }
+
     public function getByIdInvoice($id)
     {
         try {
@@ -54,29 +56,98 @@ class InvoiceController extends Controller
             return response()->json(['success' => false, 'message' => $exception->getMessage()], 500);
         }
     }
+
     public function saveInvoice(Request $request)
     {
+        try {
 
-        $client = new Client();
+            $client = new Client();
+            $client->name = $request->input('clientName');
+            $client->email = $request->input('clientEmail');
+            $client->save();
+
+            $invoice = new Invoice();
+            $invoice->description = $request->input('description');
+            $invoice->payment_terms = $request->input('paymentTerms');
+            $invoice->created_at = $request->input('createdAt');
+            $invoice->id_client = $client->id;
+            $invoice->save();
+
+            $clientAddressData = $request->input('clientAddress');
+            $clientAddress = new Address();
+            $clientAddress->street = $clientAddressData['street'];
+            $clientAddress->city = $clientAddressData['city'];
+            $clientAddress->cep = $clientAddressData['postCode'];
+            $clientAddress->country = $clientAddressData['country'];
+            $clientAddress->id_client = $client->id;
+            $clientAddress->save();
+
+            $senderAddressData = $request->input('sendersAddress');
+            $senderAddress = new SendersAddress();
+            $senderAddress->street = $senderAddressData['street'];
+            $senderAddress->city = $senderAddressData['city'];
+            $senderAddress->cep = $senderAddressData['postCode'];
+            $senderAddress->country = $senderAddressData['country'];
+            $senderAddress->save();
+
+
+            $itemsData = $request['items'];
+            foreach ($itemsData as $itemData) {
+                $item = new Item();
+                $item->name = $itemData['name'];
+                $item->price = $itemData['price'];
+                $item->qty = $itemData['quantity'];
+                $item->id_invoice = $invoice->id;
+                $item->save();
+            }
+
+            return response()->json(['success' => true, 'message' => 'Invoice saved successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error saving invoice: ' . $e->getMessage()]);
+        }
+    }
+
+    public function updateInvoice(Request $request, $id)
+    {
+        $invoice =  $this->invoice->find($id);
+
+        if (!$invoice) {
+            return response()->json(['success' => false, 'message' => 'Invoice not found']);
+        }
+
+        $client = Client::find($invoice->id_client);
+
+        if (!$client) {
+            return response()->json(['success' => false, 'message' => 'Client not found']);
+        }
+
         $client->name = $request->input('clientName');
         $client->email = $request->input('clientEmail');
         $client->save();
 
-        $invoice = new Invoice();
         $invoice->description = $request->input('description');
-        $invoice->data_payment = $request->input('paymentTerms');
+        $invoice->payment_terms = $request->input('paymentTerms');
         $invoice->created_at = $request->input('createdAt');
+        $invoice->id_client = $client->id;
+        $invoice->save();
 
+        $clientAddressData = $request->input('clientAddress');
         $clientAddress = new Address();
-        $clientAddress->street = $request->input('street');
-        $clientAddress->city = $request->input('city');
-        $clientAddress->cep = $request->input('postCode');
-        $clientAddress->country = $request->input('country');
+        $clientAddress->street = $clientAddressData['street'];
+        $clientAddress->city = $clientAddressData['city'];
+        $clientAddress->cep = $clientAddressData['postCode'];
+        $clientAddress->country = $clientAddressData['country'];
         $clientAddress->id_client = $client->id;
         $clientAddress->save();
 
+        $senderAddressData = $request->input('sendersAddress');
+        $senderAddress = new SendersAddress();
+        $senderAddress->street = $senderAddressData['street'];
+        $senderAddress->city = $senderAddressData['city'];
+        $senderAddress->cep = $senderAddressData['postCode'];
+        $senderAddress->country = $senderAddressData['country'];
+        $senderAddress->save();
 
-        // Salve os itens da invoice
         $itemsData = $request->input('items');
         foreach ($itemsData as $itemData) {
             $item = new Item();
@@ -87,72 +158,6 @@ class InvoiceController extends Controller
             $item->save();
         }
 
-        // Associe o cliente à invoice
-        $invoice->id_client = $client->id;
-
-        // Salve a invoice
-        $invoice->create();
-//        $client = $this->client->create([
-//            'name' => $request->input('clientName'),
-//            'email' => $request->input('clientEmail'),
-//        ]);
-//
-//        // Crie um novo objeto Invoice
-////        $invoice = new Invoice();
-//
-//        // Preencha os campos da invoice com base nos dados recebidos do request
-//        $invoice = $this->invoice->create([
-//            'description' => $request->input('description'),
-//            'data_payment' => $request->input('paymentTerms'),
-//            'created_at' => $request->input('createdAt'),
-//            'id_client' => $client->id,
-//        ]);
-//
-//        // Salve o endereço do cliente
-//        $clientAddressData = $this->address->create([
-//            'street' => $request->input('street'),
-//            'city' => $request->input('city'),
-//            'cep' => $request->input('postCode'),
-//            'country' => $request->input('country'),
-//        ]);
-//        $itemsData = $request->input('items');
-//        foreach ($itemsData as $itemData) {
-//            $item = new Item();
-//            $item->name = $itemData['name'];
-//            $item->price = $itemData['price'];
-//            $item->qty = $itemData['quantity'];
-//            $item->id_invoice = $invoice->id;
-//            $item->save();
-//        }
-//
-//
-////        // Salve o endereço do remetente
-////        $senderAddressData = $request->input('senderAddress');
-////        $senderAddress = new Address();
-////        $senderAddress->street = $senderAddressData['street'];
-////        $senderAddress->city = $senderAddressData['city'];
-////        $senderAddress->cep = $senderAddressData['postCode'];
-////        $senderAddress->country = $senderAddressData['country'];
-////        $senderAddress->save();
-//
-//        // Salve os itens da invoice
-//        $itemsData = $request->input('items');
-//        foreach ($itemsData as $itemData) {
-//            $item = new Item();
-//            $item->name = $itemData['name'];
-//            $item->price = $itemData['price'];
-//            $item->qty = $itemData['quantity'];
-//            $item->id_invoice = $invoice->id;
-//            $item->save();
-//        }
-//
-//        // Associe o cliente à invoice
-//        $invoice->id_client = $client->id;
-//
-//        // Salve a invoice
-//        $invoice->save();
-
-        // Retorne uma resposta de sucesso
-        return response()->json(['success' => true, 'message' => 'Invoice saved successfully']);
+        return response()->json(['success' => true, 'message' => 'Invoice updated successfully']);
     }
 }

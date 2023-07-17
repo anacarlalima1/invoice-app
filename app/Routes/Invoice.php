@@ -12,7 +12,7 @@ class Invoice
             Route::get('/invoices', [\App\Http\Controllers\invoice\InvoiceController::class, 'getAllInvoices']);
             Route::get('/invoices/{id}', [\App\Http\Controllers\invoice\InvoiceController::class, 'getByIdInvoice']);
             Route::post('/invoices', [\App\Http\Controllers\invoice\InvoiceController::class, 'saveInvoice']);
-
+            Route::put('/invoices/{id}', [\App\Http\Controllers\invoice\InvoiceController::class, 'updateInvoice']);
         });
     }
 }
