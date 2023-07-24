@@ -31,7 +31,7 @@ class InvoiceController extends Controller
                 foreach ($invoice->items as $item) {
                     $total += $total += $item->qty * $item->price;
                 }
-                $invoice->total = (float)number_format($total, 2);
+                $invoice->total = (float)number_format($total, 2, '.', '');
             }
             return response()->json(['success' => true, 'invoices' => $invoices]);
         } catch (\Exception $exception) {
@@ -49,7 +49,7 @@ class InvoiceController extends Controller
                 $item->totalItem = $item->qty * $item->price;
                 $totalPrice += $item->totalItem;
             }
-            $invoice->totalPrice = (float) number_format($totalPrice, 2);
+            $invoice->totalPrice = (float) number_format($totalPrice, 2, '.', '');
 
             return response()->json(['success' => true, 'invoice' => $invoice]);
         } catch (\Exception $exception) {
