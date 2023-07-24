@@ -109,55 +109,65 @@ class InvoiceController extends Controller
 
     public function updateInvoice(Request $request, $id)
     {
-        $invoice =  $this->invoice->find($id);
+        try {
 
-        if (!$invoice) {
-            return response()->json(['success' => false, 'message' => 'Invoice not found']);
+            $invoice = $this->invoice->find($id);
+
+            if (!$invoice) {
+                return response()->json(['success' => false, 'message' => 'Invoice not found']);
+            }
+
+            $client = $this->client->find($invoice->id_client);
+
+            if (!$client) {
+                return response()->json(['success' => false, 'message' => 'Client not found']);
+            }
+
+            $client->update([
+                'name' => $request->input('clientName'),
+                'email' => $request->input('clientEmail'),
+            ]);
+
+            $invoice->update([
+                'description' => $request->input('description'),
+                'payment_terms' => $request->input('paymentTerms'),
+                'created_at' => $request->input('createdAt'),
+                'id_client' => $client->id,
+            ]);
+
+            $clientAddressData = $request->input('clientAddress');
+            $clientAddress = Address::find($clientAddressData['id']);
+            $clientAddress->update([
+                'street' => $clientAddressData['street'],
+                'city' => $clientAddressData['city'],
+                'cep' => $clientAddressData['postCode'],
+                'country' => $clientAddressData['country'],
+                'id_client' => $client->id,
+            ]);
+
+            $senderAddressData = $request->input('sendersAddress');
+            $senderAddress = SendersAddress::find($senderAddressData['id']);
+            $senderAddress->update([
+                'street' => $senderAddressData['street'],
+                'city' => $senderAddressData['city'],
+                'cep' => $senderAddressData['postCode'],
+                'country' => $senderAddressData['country'],
+            ]);
+
+            $itemsData = $request->input('items');
+            foreach ($itemsData as $itemData) {
+                $item = Item::find($itemData['id']);
+                $item->update([
+                    'name' => $itemData['name'],
+                    'price' => $itemData['price'],
+                    'qty' => $itemData['quantity'],
+                ]);
+            }
+
+
+            return response()->json(['success' => true, 'message' => 'Invoice updated successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error saving invoice: ' . $e->getMessage()]);
         }
-
-        $client = Client::find($invoice->id_client);
-
-        if (!$client) {
-            return response()->json(['success' => false, 'message' => 'Client not found']);
-        }
-
-        $client->name = $request->input('clientName');
-        $client->email = $request->input('clientEmail');
-        $client->save();
-
-        $invoice->description = $request->input('description');
-        $invoice->payment_terms = $request->input('paymentTerms');
-        $invoice->created_at = $request->input('createdAt');
-        $invoice->id_client = $client->id;
-        $invoice->save();
-
-        $clientAddressData = $request->input('clientAddress');
-        $clientAddress = new Address();
-        $clientAddress->street = $clientAddressData['street'];
-        $clientAddress->city = $clientAddressData['city'];
-        $clientAddress->cep = $clientAddressData['postCode'];
-        $clientAddress->country = $clientAddressData['country'];
-        $clientAddress->id_client = $client->id;
-        $clientAddress->save();
-
-        $senderAddressData = $request->input('sendersAddress');
-        $senderAddress = new SendersAddress();
-        $senderAddress->street = $senderAddressData['street'];
-        $senderAddress->city = $senderAddressData['city'];
-        $senderAddress->cep = $senderAddressData['postCode'];
-        $senderAddress->country = $senderAddressData['country'];
-        $senderAddress->save();
-
-        $itemsData = $request->input('items');
-        foreach ($itemsData as $itemData) {
-            $item = new Item();
-            $item->name = $itemData['name'];
-            $item->price = $itemData['price'];
-            $item->qty = $itemData['quantity'];
-            $item->id_invoice = $invoice->id;
-            $item->save();
-        }
-
-        return response()->json(['success' => true, 'message' => 'Invoice updated successfully']);
     }
 }
