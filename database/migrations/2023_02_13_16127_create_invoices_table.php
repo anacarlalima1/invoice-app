@@ -19,7 +19,7 @@ class CreateInvoicesTable extends Migration
                 $table->foreignId('id_client')->constrained('clients');
                 $table->string('description');
                 $table->enum('payment_terms', ['1', '7', '14', '30'])->default('1');
-                $table->enum('status', ['Paid', 'Pending', 'Draft'])->default('Draft');
+                $table->enum('status', ['Paid', 'Pending', 'Draft'])->default('Pending');
                 $table->timestamps();
             });
         }
