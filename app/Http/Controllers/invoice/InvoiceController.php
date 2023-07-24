@@ -42,7 +42,7 @@ class InvoiceController extends Controller
     public function getByIdInvoice($id)
     {
         try {
-            $invoice = $this->invoice->with('author.address', 'items')->where('id', $id)->first();
+            $invoice = $this->invoice->with('client', 'author.address', 'senderAddress', 'items')->where('id', $id)->first();
 
             $totalPrice = 0;
             foreach ($invoice->items as $item) {
@@ -50,8 +50,39 @@ class InvoiceController extends Controller
                 $totalPrice += $item->totalItem;
             }
             $invoice->totalPrice = (float) number_format($totalPrice, 2, '.', '');
+            $formattedInvoice = [
+                'senderAddress' => [
+                    'street' => $invoice->senderAddress->street,
+                    'city' => $invoice->senderAddress->city,
+                    'postCode' => $invoice->senderAddress->cep,
+                    'country' => $invoice->senderAddress->country,
+                ],
+                'clientName' => $invoice->client->name,
+                'clientEmail' => $invoice->client->email,
+                'clientAddress' => [
+                    'street' => $invoice->client->address->street,
+                    'city' => $invoice->client->address->city,
+                    'postCode' => $invoice->client->address->cep,
+                    'country' => $invoice->client->address->country,
+                ],
+                'createdAt' => $invoice->created_at,
+                'paymentTerms' => $invoice->payment_terms,
+                'description' => $invoice->description,
+                'items' => [],
+            ];
 
-            return response()->json(['success' => true, 'invoice' => $invoice]);
+            foreach ($invoice->items as $item) {
+                $formattedItem = [
+                    'name' => $item->name,
+                    'description' => $item->description,
+                    'quantity' => $item->qty,
+                    'price' => $item->price,
+                    'totalItem' => $item->qty * $item->price,
+                ];
+                $formattedInvoice['items'][] = $formattedItem;
+            }
+
+            return response()->json(['success' => true, 'invoice' => $formattedInvoice]);
         } catch (\Exception $exception) {
             return response()->json(['success' => false, 'message' => $exception->getMessage()], 500);
         }
