@@ -15,10 +15,12 @@ class InvoiceFactory extends Factory
      */
     public function definition()
     {
+        $paymentTermsOptions = ['1', '7', '14', '30'];
+
         return [
             'id_client' =>  Client::inRandomOrder()->first()->id,
             'description' => $this->faker->text(),
-            'data_payment' => $this->faker->date(),
+            'payment_terms' => $this->faker->randomElement($paymentTermsOptions),
         ];
     }
 }

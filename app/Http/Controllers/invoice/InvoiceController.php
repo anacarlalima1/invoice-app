@@ -24,7 +24,7 @@ class InvoiceController extends Controller
     public function getAllInvoices()
     {
         try {
-            $invoices = $this->invoice->with('author', 'items')->get();
+            $invoices = $this->invoice->has('items')->with('author', 'items')->get();
 
             foreach ($invoices as $invoice) {
                 $total = 0;
