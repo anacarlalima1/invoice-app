@@ -186,4 +186,20 @@ class InvoiceController extends Controller
             return response()->json(['success' => false, 'message' => 'Error saving invoice: ' . $e->getMessage()]);
         }
     }
+    public function markAsPaid($id)
+    {
+        try {
+            $invoice = $this->invoice->find($id);
+
+            if (!$invoice) {
+                return response()->json(['success' => false, 'message' => 'Invoice not found'], 404);
+            }
+            $invoice->status = 'Paid';
+            $invoice->save();
+
+            return response()->json(['success' => true, 'message' => 'Invoice marked as paid']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error saving invoice: ' . $e->getMessage()]);
+        }
+    }
 }
