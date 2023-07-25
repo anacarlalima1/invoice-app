@@ -12,13 +12,15 @@ use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
-    protected $client;
+    protected $client, $address, $sender_address, $invoice, $item;
 
-    public function __construct(Client $client, Address $address, Invoice $invoices)
+    public function __construct(Client $client, Address $address, Invoice $invoices, SendersAddress $sender_address, Item $items)
     {
         $this->client = $client;
         $this->address = $address;
+        $this->sender_address = $sender_address;
         $this->invoice = $invoices;
+        $this->item = $items;
     }
 
     public function getAllInvoices()
@@ -113,7 +115,7 @@ class InvoiceController extends Controller
             $clientAddress->id_client = $client->id;
             $clientAddress->save();
 
-            $senderAddressData = $request->input('sendersAddress');
+            $senderAddressData = $request->input('senderAddress');
             $senderAddress = new SendersAddress();
             $senderAddress->street = $senderAddressData['street'];
             $senderAddress->city = $senderAddressData['city'];
@@ -167,7 +169,7 @@ class InvoiceController extends Controller
             ]);
 
             $clientAddressData = $request->input('clientAddress');
-            $clientAddress = Address::find($clientAddressData['id']);
+            $clientAddress = $this->address->find($clientAddressData['id']);
             $clientAddress->update([
                 'street' => $clientAddressData['street'],
                 'city' => $clientAddressData['city'],
@@ -176,8 +178,8 @@ class InvoiceController extends Controller
                 'id_client' => $client->id,
             ]);
 
-            $senderAddressData = $request->input('sendersAddress');
-            $senderAddress = SendersAddress::find($senderAddressData['id']);
+            $senderAddressData = $request->input('senderAddress');
+            $senderAddress = $this->sender_address->find($senderAddressData['id']);
             $senderAddress->update([
                 'street' => $senderAddressData['street'],
                 'city' => $senderAddressData['city'],
@@ -187,7 +189,7 @@ class InvoiceController extends Controller
 
             $itemsData = $request->input('items');
             foreach ($itemsData as $itemData) {
-                $item = Item::find($itemData['id']);
+                $item = $this->items->find($itemData['id']);
                 $item->update([
                     'name' => $itemData['name'],
                     'price' => $itemData['price'],
