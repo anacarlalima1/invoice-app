@@ -20,4 +20,8 @@ class Invoice extends Model
     {
         return $this->hasMany(Item::class, 'id_invoice', 'id');
     }
+    public function sender()
+    {
+        return $this->hasOne(SendersAddress::class, 'id_invoice', 'id');
+    }
 }

@@ -26,7 +26,7 @@ class InvoiceController extends Controller
     public function getAllInvoices()
     {
         try {
-            $invoices = $this->invoice->has('items')->with('author', 'items')->get();
+            $invoices = $this->invoice->whereHas('items')->whereHas('sender')->with('author', 'items', 'sender')->get();
 
             foreach ($invoices as $invoice) {
                 $total = 0;
@@ -44,7 +44,7 @@ class InvoiceController extends Controller
     public function getByIdInvoice($id)
     {
         try {
-            $invoice = $this->invoice->with('client', 'author.address', 'senderAddress', 'items')->where('id', $id)->first();
+            $invoice = $this->invoice->with('author', 'sender', 'author.address', 'items')->where('id', $id)->first();
 
             $totalPrice = 0;
             foreach ($invoice->items as $item) {
@@ -54,18 +54,18 @@ class InvoiceController extends Controller
             $invoice->totalPrice = (float) number_format($totalPrice, 2, '.', '');
             $formattedInvoice = [
                 'senderAddress' => [
-                    'street' => $invoice->senderAddress->street,
-                    'city' => $invoice->senderAddress->city,
-                    'postCode' => $invoice->senderAddress->cep,
-                    'country' => $invoice->senderAddress->country,
+                    'street' => $invoice->sender->street,
+                    'city' => $invoice->sender->city,
+                    'postCode' => $invoice->sender->cep,
+                    'country' => $invoice->sender->country,
                 ],
-                'clientName' => $invoice->client->name,
-                'clientEmail' => $invoice->client->email,
+                'clientName' => $invoice->author->name,
+                'clientEmail' => $invoice->author->email,
                 'clientAddress' => [
-                    'street' => $invoice->client->address->street,
-                    'city' => $invoice->client->address->city,
-                    'postCode' => $invoice->client->address->cep,
-                    'country' => $invoice->client->address->country,
+                    'street' => $invoice->author->address->street,
+                    'city' => $invoice->author->address->city,
+                    'postCode' => $invoice->author->address->cep,
+                    'country' => $invoice->author->address->country,
                 ],
                 'createdAt' => $invoice->created_at,
                 'paymentTerms' => $invoice->payment_terms,

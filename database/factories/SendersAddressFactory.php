@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 use App\Models\Client;
+use App\Models\Invoice;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SendersAddressFactory extends Factory
@@ -14,6 +15,7 @@ class SendersAddressFactory extends Factory
     public function definition()
     {
         return [
+            'id_invoice' =>  Invoice::inRandomOrder()->first()->id,
             'street' => $this->faker->streetAddress(),
             'city' => $this->faker->city(),
             'country' => $this->faker->country(),

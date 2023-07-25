@@ -17,6 +17,7 @@ class CreateSendersAddressTable extends Migration
             if (!Schema::hasTable('senders_address')) {
                 Schema::create('senders_address', function (Blueprint $table) {
                     $table->id();
+                    $table->foreignId('id_invoice')->constrained('invoices');
                     $table->string('street');
                     $table->string('city');
                     $table->string('country');
