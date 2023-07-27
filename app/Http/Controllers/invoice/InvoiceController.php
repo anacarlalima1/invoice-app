@@ -122,6 +122,7 @@ class InvoiceController extends Controller
             $senderAddress->city = $senderAddressData['city'];
             $senderAddress->cep = $senderAddressData['postCode'];
             $senderAddress->country = $senderAddressData['country'];
+            $senderAddress->id_invoice = $invoice->id;
             $senderAddress->save();
 
 
@@ -186,6 +187,7 @@ class InvoiceController extends Controller
                 'city' => $senderAddressData['city'],
                 'cep' => $senderAddressData['postCode'],
                 'country' => $senderAddressData['country'],
+                'id_invoice' => $invoice->id,
             ]);
 
             $itemsData = $request->input('items');
