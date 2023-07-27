@@ -70,6 +70,7 @@ class InvoiceController extends Controller
                 'createdAt' => $invoice->created_at,
                 'paymentTerms' => $invoice->payment_terms,
                 'description' => $invoice->description,
+                'status' => $invoice->status,
                 'items' => [],
             ];
 
