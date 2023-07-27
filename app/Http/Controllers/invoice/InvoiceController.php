@@ -26,7 +26,7 @@ class InvoiceController extends Controller
     public function getAllInvoices()
     {
         try {
-            $invoices = $this->invoice->whereHas('items')->whereHas('sender')->with('author', 'items', 'sender')->get();
+            $invoices = $this->invoice->whereHas('items')->whereHas('sender')->whereHas('author.address')->with('author', 'items', 'sender')->get();
 
             foreach ($invoices as $invoice) {
                 $total = 0;
@@ -67,7 +67,7 @@ class InvoiceController extends Controller
                     'postCode' => $invoice->author->address->cep,
                     'country' => $invoice->author->address->country,
                 ],
-                'createdAt' => $invoice->created_at,
+                'createdAt' => $invoice->created_at->format('d/m/Y'),
                 'paymentTerms' => $invoice->payment_terms,
                 'description' => $invoice->description,
                 'status' => $invoice->status,
@@ -192,11 +192,13 @@ class InvoiceController extends Controller
 
             $itemsData = $request->input('items');
             foreach ($itemsData as $itemData) {
-                $item = $this->items->find($itemData['id']);
+                $item = $this->item->find($itemData['id']);
                 $item->update([
                     'name' => $itemData['name'],
                     'price' => $itemData['price'],
                     'qty' => $itemData['quantity'],
+                    'id_invoice' => $invoice->id,
+
                 ]);
             }
 
