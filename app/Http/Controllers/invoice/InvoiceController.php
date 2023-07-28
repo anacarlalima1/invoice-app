@@ -54,6 +54,7 @@ class InvoiceController extends Controller
             $invoice->totalPrice = (float) number_format($totalPrice, 2, '.', '');
             $formattedInvoice = [
                 'senderAddress' => [
+                    'id' => $invoice->sender->id,
                     'street' => $invoice->sender->street,
                     'city' => $invoice->sender->city,
                     'postCode' => $invoice->sender->cep,
@@ -76,6 +77,7 @@ class InvoiceController extends Controller
 
             foreach ($invoice->items as $item) {
                 $formattedItem = [
+                    'id' => $item->id,
                     'name' => $item->name,
                     'description' => $item->description,
                     'quantity' => $item->qty,
@@ -145,7 +147,7 @@ class InvoiceController extends Controller
     public function updateInvoice(Request $request, $id)
     {
         try {
-
+            
             $invoice = $this->invoice->find($id);
 
             if (!$invoice) {
@@ -171,7 +173,7 @@ class InvoiceController extends Controller
             ]);
 
             $clientAddressData = $request->input('clientAddress');
-            $clientAddress = $this->address->find($clientAddressData['id']);
+            $clientAddress = $this->address->find($client->id);
             $clientAddress->update([
                 'street' => $clientAddressData['street'],
                 'city' => $clientAddressData['city'],
@@ -187,25 +189,40 @@ class InvoiceController extends Controller
                 'city' => $senderAddressData['city'],
                 'cep' => $senderAddressData['postCode'],
                 'country' => $senderAddressData['country'],
-                'id_invoice' => $invoice->id,
             ]);
 
             $itemsData = $request->input('items');
             foreach ($itemsData as $itemData) {
-                $item = $this->item->find($itemData['id']);
-                $item->update([
-                    'name' => $itemData['name'],
-                    'price' => $itemData['price'],
-                    'qty' => $itemData['quantity'],
-                    'id_invoice' => $invoice->id,
+                if (isset($itemData['id']) && $itemData['id']) {
+                    $itemId = $itemData['id'];
+                    $item = $this->item->find($itemId);
+                    if (!$item) {
+                        return response()->json(['success' => false, 'message' => 'Item not found']);
+                    }
 
-                ]);
+                    $item->name = $itemData['name'];
+                    $item->price = $itemData['price'];
+                    $item->qty = $itemData['quantity'];
+                    $item->save();
+                } else {
+                    $newItem = new Item();
+                    $newItem->name = $itemData['name'];
+                    $newItem->price = $itemData['price'];
+                    $newItem->qty = $itemData['quantity'];
+                    $newItem->id_invoice = $invoice->id;
+                    $newItem->save();
+                }
             }
+            $invoiceItemIds = collect($itemsData)->pluck('id')->filter();
+            $deletedItems = $invoice->items->whereNotIn('id', $invoiceItemIds);
 
+            foreach ($deletedItems as $deletedItem) {
+                $deletedItem->delete();
+            }
 
             return response()->json(['success' => true, 'message' => 'Invoice updated successfully']);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error saving invoice: ' . $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Error updated invoice: ' . $e->getMessage(), 'trace' => $e->getTraceAsString()]);
         }
     }
     public function deleteInvoice($id)

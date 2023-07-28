@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
+    protected $table = 'items';
+    protected $fillable = ['name', 'qty', 'id_invoice', 'price'];
     use HasFactory;
     public function author()
     {
