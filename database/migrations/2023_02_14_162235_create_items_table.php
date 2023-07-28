@@ -16,7 +16,7 @@ class CreateItemsTable extends Migration
         if (!Schema::hasTable('items')){
             Schema::create('items', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('id_invoice')->constrained('invoices');
+                $table->foreignId('id_invoice')->constrained('invoices')->onDelete('cascade');
                 $table->string('name');
                 $table->integer('qty');
                 $table->decimal('price');
