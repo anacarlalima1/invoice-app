@@ -147,7 +147,7 @@ class InvoiceController extends Controller
     public function updateInvoice(Request $request, $id)
     {
         try {
-            
+
             $invoice = $this->invoice->find($id);
 
             if (!$invoice) {
@@ -190,8 +190,9 @@ class InvoiceController extends Controller
                 'cep' => $senderAddressData['postCode'],
                 'country' => $senderAddressData['country'],
             ]);
-
             $itemsData = $request->input('items');
+            $existingItemIds = [];
+
             foreach ($itemsData as $itemData) {
                 if (isset($itemData['id']) && $itemData['id']) {
                     $itemId = $itemData['id'];
@@ -200,21 +201,26 @@ class InvoiceController extends Controller
                         return response()->json(['success' => false, 'message' => 'Item not found']);
                     }
 
-                    $item->name = $itemData['name'];
-                    $item->price = $itemData['price'];
-                    $item->qty = $itemData['quantity'];
-                    $item->save();
+                    $item->update([
+                        'name' => $itemData['name'],
+                        'price' => $itemData['price'],
+                        'qty' => $itemData['quantity'],
+                    ]);
+
+                    $existingItemIds[] = $item->id;
                 } else {
-                    $newItem = new Item();
-                    $newItem->name = $itemData['name'];
-                    $newItem->price = $itemData['price'];
-                    $newItem->qty = $itemData['quantity'];
-                    $newItem->id_invoice = $invoice->id;
+                    $newItem = new Item([
+                        'name' => $itemData['name'],
+                        'price' => $itemData['price'],
+                        'qty' => $itemData['quantity'],
+                        'id_invoice' => $invoice->id,
+                    ]);
                     $newItem->save();
+
+                    $existingItemIds[] = $newItem->id;
                 }
             }
-            $invoiceItemIds = collect($itemsData)->pluck('id')->filter();
-            $deletedItems = $invoice->items->whereNotIn('id', $invoiceItemIds);
+            $deletedItems = $invoice->items->whereNotIn('id', $existingItemIds);
 
             foreach ($deletedItems as $deletedItem) {
                 $deletedItem->delete();
