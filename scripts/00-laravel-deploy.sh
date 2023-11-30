@@ -13,4 +13,3 @@ echo "Running migrations..."
 php artisan migrate --force
 php artisan db:seed --class=ClientSeeder
 php artisan db:seed
-php artisan serve
