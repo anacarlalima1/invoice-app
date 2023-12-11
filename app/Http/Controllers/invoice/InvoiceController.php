@@ -31,7 +31,7 @@ class InvoiceController extends Controller
             foreach ($invoices as $invoice) {
                 $total = 0;
                 foreach ($invoice->items as $item) {
-                    $total += $total += $item->qty * $item->price;
+                    $total += $item->qty * $item->price;
                 }
                 $invoice->total = (float)number_format($total, 2, '.', '');
             }
